@@ -1,0 +1,8 @@
+//
+// Created by Максим Учунжян on 09.03.2026.
+//
+
+#ifndef PROJECT_CALCULATOR_EXPRESSION_H
+#define PROJECT_CALCULATOR_EXPRESSION_H
+
+#endif //PROJECT_CALCULATOR_EXPRESSION_H
