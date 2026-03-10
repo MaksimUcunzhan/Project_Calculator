@@ -11,6 +11,7 @@ add_library(CoreLib STATIC
         src/Expression.cpp
         src/Operations.cpp
         src/Logger.cpp
+        include/Exceptions.h
 )
 
 # Указываем, где лежат заголовочные файлы (.h)
