@@ -9,8 +9,6 @@ add_library(CoreLib STATIC
         src/Expression.cpp
         src/Operations.cpp
         src/Logger.cpp
-        include/Exceptions.h
-        include/Constant.h
         src/Constant.cpp
 )
 

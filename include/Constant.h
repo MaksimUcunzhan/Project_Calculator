@@ -40,9 +40,3 @@ public:
         return std::make_unique<Constant>(value_);
     }
 };
-
-namespace MathConst {
-    constexpr Constant PI(3.14159265358979323846, 0.0);
-    constexpr Constant E(2.71828182845904523536, 0.0);
-    constexpr Constant I(0.0, 1.0);  // Мнимая единица
-}
