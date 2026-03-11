@@ -4,21 +4,20 @@ project(Project_Calculator)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Создаем библиотеку с логикой (КЛАССЫ)
-# Сюда входят все .cpp файлы, КРОМЕ main.cpp и тестов
 add_library(CoreLib STATIC
         src/Complex.cpp
         src/Expression.cpp
         src/Operations.cpp
         src/Logger.cpp
         include/Exceptions.h
+        include/Constant.h
+        src/Constant.cpp
 )
 
 # Указываем, где лежат заголовочные файлы (.h)
 target_include_directories(CoreLib PUBLIC include)
 
 # 2. Основная программа (Executable)
-# Только main.cpp, логика берется из CoreLib
 add_executable(Project_Calculator main.cpp)
 target_link_libraries(Project_Calculator PRIVATE CoreLib)
 
@@ -36,8 +35,8 @@ enable_testing()
 
 add_executable(Project_Tests tests/test_main.cpp)
 target_link_libraries(Project_Tests PRIVATE
-        CoreLib          # Ваша логика
-        GTest::gtest_main # Библиотека тестов
+        CoreLib
+        GTest::gtest_main
 )
 
 include(GoogleTest)
