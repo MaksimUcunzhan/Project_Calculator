@@ -1,8 +1,9 @@
 //
 // Created by Максим Учунжян on 09.03.2026.
 //
-
 #include <gtest/gtest.h>
+#include "Operations.h"
+#include "Variable.h"
 #include "Complex.h"
 #include "Constant.h"
 #include "Expression.h"
@@ -113,3 +114,84 @@ TEST(ConstexprTest, CompileTimeComputation) {
 
     SUCCEED() << "Constexpr computation works correctly";
 }
+
+
+class ExpressionTest : public ::testing::Test {
+protected:
+    void SetUp() override {
+        // clear and reset the context before each test
+        globalContext = Context();
+    }
+};
+
+// test of simple addition
+TEST_F(ExpressionTest, SimpleAddition) {
+    auto add = std::make_unique<AddOperation>(
+        std::make_unique<Constant>(Complex(1, 2)),
+        std::make_unique<Constant>(Complex(3, 4))
+    );
+    Complex result = add->evaluate();
+    EXPECT_EQ(result.real(), 4);
+    EXPECT_EQ(result.imag(), 6);
+}
+
+// testing working with variables via Context
+TEST_F(ExpressionTest, VariableEvaluation) {
+    globalContext.setVariable("x", Complex(10, 0));
+    Variable var("x");
+
+    EXPECT_EQ(var.evaluate().real(), 10);
+    EXPECT_EQ(var.toString(), "x");
+}
+
+// complex chain of operations test: (x + y) * z
+TEST_F(ExpressionTest, ComplexChain) {
+    globalContext.setVariable("x", Complex(1, 0));
+    globalContext.setVariable("y", Complex(2, 0));
+    globalContext.setVariable("z", Complex(3, 0));
+
+    auto add = std::make_unique<AddOperation>(
+        std::make_unique<Variable>("x"),
+        std::make_unique<Variable>("y")
+    );
+    auto mul = std::make_unique<MulOperations>(std::move(add), std::make_unique<Variable>("z"));
+
+    EXPECT_EQ(mul->evaluate().real(), 9);
+    EXPECT_EQ(mul->toString(), "((x + y) * z)");
+}
+
+// undefined variable exception test
+TEST_F(ExpressionTest, UndefinedVariableThrows) {
+    Variable var("unknown");
+    EXPECT_THROW(var.evaluate(), UndefinedVariableException);
+}
+
+// division test
+TEST_F(ExpressionTest, DivisionOperation) {
+    auto div = std::make_unique<DivOperations>(
+        std::make_unique<Constant>(Complex(10, 0)),
+        std::make_unique<Constant>(Complex(2, 0))
+    );
+    EXPECT_EQ(div->evaluate().real(), 5);
+}
+
+// clone() test
+TEST_F(ExpressionTest, CloneOperation) {
+    auto original = std::make_unique<AddOperation>(
+        std::make_unique<Constant>(Complex(1, 1)),
+        std::make_unique<Constant>(Complex(2, 2))
+    );
+
+    auto cloned = original->clone();
+    EXPECT_NE(original.get(), cloned.get());
+    EXPECT_EQ(original->evaluate().real(), cloned->evaluate().real());
+    EXPECT_EQ(original->toString(), cloned->toString());
+}
+
+// test for the presence of a variable in Context
+TEST_F(ExpressionTest, ContextHasVariable) {
+    globalContext.setVariable("a", Complex(0, 0));
+    EXPECT_TRUE(globalContext.hasVariable("a"));
+    EXPECT_FALSE(globalContext.hasVariable("b"));
+}
+
