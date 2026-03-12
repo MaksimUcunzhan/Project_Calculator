@@ -11,6 +11,7 @@ add_library(CoreLib STATIC
         src/Logger.cpp
         src/Variable.cpp
         src/Context.cpp
+        src/Constant.cpp
 )
 
 # Указываем, где лежат заголовочные файлы (.h)
