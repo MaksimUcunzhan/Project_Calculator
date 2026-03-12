@@ -12,3 +12,17 @@ std::string BinaryOperation::toString() const {
 }
 
 
+Complex AddOperation::applyOperations(const Complex &l, const Complex &r) const {
+    return l+r;
+}
+std::string AddOperation::getOperatorSymbol() const {
+    return "+";
+}
+std::unique_ptr<Expression> AddOperation::clone() const {
+    return std::make_unique<AddOperation>(left->clone(),right->clone());
+}
+
+
+
+
+
