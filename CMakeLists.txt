@@ -12,6 +12,7 @@ add_library(CoreLib STATIC
         src/Operations.cpp
         src/Logger.cpp
         src/Variable.cpp
+        src/Context.cpp
 )
 
 # Указываем, где лежат заголовочные файлы (.h)
@@ -36,7 +37,7 @@ enable_testing()
 
 add_executable(Project_Tests tests/test_main.cpp)
 target_link_libraries(Project_Tests PRIVATE
-        CoreLib          # Ваша логика
+        CoreLib
         GTest::gtest_main # Библиотека тестов
 )
 
