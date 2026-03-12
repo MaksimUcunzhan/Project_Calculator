@@ -1,8 +1,21 @@
-//
-// Created by Глеб Карицкий on 12.03.2026.
-//
+#pragma once
+#include <string>
+#include <optional>
+#include <unordered_map>
+#include "Complex.h"
 
-#ifndef CONTEXT_H
-#define CONTEXT_H
+class Context {
+private:
+    std::unordered_map<std::string, Complex> variables;
 
-#endif //CONTEXT_H
+public:
+    void setVariable(const std::string &name, const Complex &value);
+
+    std::optional<Complex> getVariable(const std::string &name) const;
+
+    bool hasVariable(const std::string &name) const;
+};
+
+// Declare that such a variable exists somewhere in the program
+// and we can use it where the this header file is included without creating a bunch of identical objects
+extern Context globalContext;
