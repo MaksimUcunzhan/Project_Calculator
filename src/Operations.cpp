@@ -37,3 +37,15 @@ std::string MulOperations::getOperatorSymbol() const {
 std::unique_ptr<Expression> MulOperations::clone() const {
     return std::make_unique<MulOperations>(left->clone(), right->clone());
 }
+
+Complex DivOperations::applyOperations(const Complex &l, const Complex &r) const {
+    return l / r;
+}
+
+std::string DivOperations::getOperatorSymbol() const {
+    return "/";
+}
+
+std::unique_ptr<Expression> DivOperations::clone() const {
+    return std::make_unique<DivOperations>(left->clone(), right->clone());
+}
