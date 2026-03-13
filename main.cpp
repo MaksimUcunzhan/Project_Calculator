@@ -177,7 +177,6 @@ int main() {
 
                 auto val = globalContext.getVariable(name); // std::optional<Complex>
 
-                auto val = ctx.getVariable(name); // std::optional<Complex>
                 if (!val.has_value()) {
                     throw UndefinedVariableException("Variable '" + name + "' not found");
                 }
@@ -187,6 +186,7 @@ int main() {
                 continue;
             }
 
+            // clear function
             if (input.rfind("clear ", 0) == 0) {
                 std::string name = trim(input.substr(6));
                 if (!isIdentifier(name)) {
