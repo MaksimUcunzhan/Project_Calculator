@@ -19,3 +19,30 @@ std::string trim(const std::string& s) {
     size_t end = s.find_last_not_of(" \t");
     return s.substr(start, end - start + 1);
 }
+
+bool isNumber(const std::string& s) {
+    if (s.empty()) return false;
+    bool hasDigit = false;
+    size_t i = 0;
+
+    if (s[0] == '+' || s[0] == '-') i = 1;
+    for (; i < s.size(); ++i) {
+        if (std::isdigit(static_cast<unsigned char>(s[i])) || s[i] == '.') {
+            hasDigit = true;
+        } else {
+            return false;
+        }
+    }
+    return hasDigit;
+}
+
+bool isIdentifier(const std::string& s) {
+    if (s.empty()) return false;
+    if (!std::isalpha(static_cast<unsigned char>(s[0])) && s[0] != '_')
+        return false;
+    for (size_t i = 1; i < s.size(); ++i) {
+        if (!std::isalnum(static_cast<unsigned char>(s[i])) && s[i] != '_')
+            return false;
+    }
+    return true;
+}
