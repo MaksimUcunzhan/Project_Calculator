@@ -18,9 +18,22 @@ public:
         : std::runtime_error(msg) {}
 };
 
+// math exceptions group
+class MathException : public CalculatorException {
+public:
+    explicit MathException(const std::string& msg)
+        : CalculatorException(msg) {}
+};
+
 // exceptions division by zero (need for Complex)
-class DivisionByZeroException : public CalculatorException {
+class DivisionByZeroException : public MathException {
 public:
     explicit DivisionByZeroException(const std::string& msg)
-        : CalculatorException("DivisionByZero: " + msg) {}
+        : MathException("DivisionByZero: " + msg) {}
+};
+
+class NegativeSqrtException : public MathException {
+public:
+    explicit NegativeSqrtException(const std::string& msg)
+        : MathException("NegativeSqrt: " + msg) {}
 };
