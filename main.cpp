@@ -101,7 +101,6 @@ std::string complexToString(const Complex& c) {
 }
 
 int main() {
-    Context ctx;
     Logger logger("session.log");
 
     std::cout << ">>> Welcome to ComplexCalc (C++23)\n";
@@ -140,7 +139,7 @@ int main() {
             }
             if (input == "vars") {
                 std::cout << "Defined variables:\n";
-                ctx.printAll(std::cout);
+                globalContext.printAll(std::cout);
                 std::cout << "\n";
                 continue;
             }
@@ -162,7 +161,7 @@ int main() {
                 }
 
                 double value = std::stod(valuePart);
-                ctx.setVariable(namePart, Complex(value));
+                globalContext.setVariable(namePart, Complex(value));
                 std::cout << "[INFO] Variable '" << namePart << "' = " << value << "\n";
                 logger.write("Set " + namePart + " = " + std::to_string(value));
                 continue;
