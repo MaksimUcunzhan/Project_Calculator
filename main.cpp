@@ -175,6 +175,8 @@ int main() {
                     throw VariableNameException("Invalid variable name: '" + name + "'");
                 }
 
+                auto val = globalContext.getVariable(name); // std::optional<Complex>
+
                 auto val = ctx.getVariable(name); // std::optional<Complex>
                 if (!val.has_value()) {
                     throw UndefinedVariableException("Variable '" + name + "' not found");
