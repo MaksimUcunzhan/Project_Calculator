@@ -30,4 +30,23 @@ public:
 
     Logger(const Logger&) = delete;
     Logger& operator=(const Logger&) = delete;
+
+    Logger(Logger&& other) noexcept
+        : filename_(std::move(other.filename_)),
+          file_(std::move(other.file_)),
+          active_(other.active_)
+    {
+        other.active_ = false;
+    }
+
+    Logger& operator=(Logger&& other) noexcept {
+        if (this != &other) {
+            if (active_) { try { write("[SESSION END]"); file_.close(); } catch (...) {} }
+            filename_ = std::move(other.filename_);
+            file_ = std::move(other.file_);
+            active_ = other.active_;
+            other.active_ = false;
+        }
+        return *this;
+    }
 };
