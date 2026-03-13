@@ -135,3 +135,45 @@ int main() {
                           << "  exit              Quit program\n";
                 continue;
             }
+
+            // let command
+            if (input.rfind("let ", 0) == 0) { // начинается с "let "
+                size_t eqPos = input.find('=');
+                if (eqPos == std::string::npos) {
+                    throw ParseException("Invalid assignment, expected '='");
+                }
+
+                std::string namePart  = trim(input.substr(4, eqPos - 4));
+                std::string valuePart = trim(input.substr(eqPos + 1));
+
+                if (!isIdentifier(namePart)) {
+                    throw VariableNameException("Invalid variable name: '" + namePart + "'");
+                }
+                if (!isNumber(valuePart)) {
+                    throw ParseException("Right side of assignment must be a number");
+                }
+
+                double value = std::stod(valuePart);
+                globalContext.setVariable(namePart, Complex(value));
+
+                std::cout << "[INFO] Variable '" << namePart << "' = " << value << "\n";
+                logger.write("Set " + namePart + " = " + std::to_string(value));
+                continue;
+            }
+
+            // get command
+            if (input.rfind("get ", 0) == 0) {
+                std::string name = trim(input.substr(4));
+                if (!isIdentifier(name)) {
+                    throw VariableNameException("Invalid variable name: '" + name + "'");
+                }
+
+                auto val = globalContext.getVariable(name); // std::optional<Complex>
+                if (!val.has_value()) {
+                    throw UndefinedVariableException("Variable '" + name + "' not found");
+                }
+
+                std::cout << "= " << val.value() << "\n";
+                logger.write("Get " + name + " = " + complexToString(val.value()));
+                continue;
+            }
