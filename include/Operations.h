@@ -56,3 +56,13 @@ class DivOperations : public BinaryOperation {
 
     std::unique_ptr<Expression> clone() const override;
 };
+
+class SubOperations : public BinaryOperation {
+    using BinaryOperation::BinaryOperation;
+
+    Complex applyOperations(const Complex &l, const Complex &r) const override;
+
+    std::string getOperatorSymbol() const override;
+
+    std::unique_ptr<Expression> clone() const override;
+};

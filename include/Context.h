@@ -14,6 +14,16 @@ public:
     std::optional<Complex> getVariable(const std::string &name) const;
 
     bool hasVariable(const std::string &name) const;
+
+    void printAll(std::ostream& os) const {
+        if (variables.empty()) {
+            os << "  (none)\n";
+            return;
+        }
+        for (const auto& [name, value] : variables) {
+            os << "  " << name << " = " << value << "\n";
+        }
+    }
 };
 
 // Declare that such a variable exists somewhere in the program

@@ -88,7 +88,7 @@ std::unique_ptr<Expression> parseExpression(const std::string& input) {
         case '/':
             return std::make_unique<DivOperations>(std::move(left), std::move(right));
         case '-':
-            throw ParseException("Subtraction '-' is not supported in this version");
+            return std::make_unique<SubOperations>(std::move(left), std::move(right));
         default:
             throw ParseException(std::string("Unknown operator '") + op + "'");
     }
@@ -101,6 +101,7 @@ std::string complexToString(const Complex& c) {
 }
 
 int main() {
+    Context ctx;
     Logger logger("session.log");
 
     std::cout << ">>> Welcome to ComplexCalc (C++23)\n";
@@ -137,7 +138,12 @@ int main() {
                 std::cout << "  exit              - Exit program\n\n";
                 continue;
             }
-
+            if (input == "vars") {
+                std::cout << "Defined variables:\n";
+                ctx.printAll(std::cout);
+                std::cout << "\n";
+                continue;
+            }
             // let command
             if (input.rfind("let ", 0) == 0) { // начинается с "let "
                 size_t eqPos = input.find('=');
@@ -156,8 +162,7 @@ int main() {
                 }
 
                 double value = std::stod(valuePart);
-                globalContext.setVariable(namePart, Complex(value));
-
+                ctx.setVariable(namePart, Complex(value));
                 std::cout << "[INFO] Variable '" << namePart << "' = " << value << "\n";
                 logger.write("Set " + namePart + " = " + std::to_string(value));
                 continue;
@@ -170,7 +175,7 @@ int main() {
                     throw VariableNameException("Invalid variable name: '" + name + "'");
                 }
 
-                auto val = globalContext.getVariable(name); // std::optional<Complex>
+                auto val = ctx.getVariable(name); // std::optional<Complex>
                 if (!val.has_value()) {
                     throw UndefinedVariableException("Variable '" + name + "' not found");
                 }
