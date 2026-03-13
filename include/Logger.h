@@ -7,6 +7,11 @@
 
 
 class Logger {
+private:
+    std::string   filename_;
+    std::ofstream file_;
+    bool          active_;
+
 public:
     explicit Logger(const std::string& filename)
         : filename_(filename), active_(false)
