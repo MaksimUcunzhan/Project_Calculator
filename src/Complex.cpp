@@ -9,6 +9,10 @@ Complex Complex::operator+(const Complex& other) const {
     return Complex(real_ + other.real_, imag_ + other.imag_);
 }
 
+Complex Complex::operator-(const Complex& other) const {
+    return Complex(real_ - other.real_, imag_ - other.imag_);
+}
+
 Complex Complex::operator*(const Complex& other) const {
     return Complex(
         real_ * other.real_ - imag_ * other.imag_,
