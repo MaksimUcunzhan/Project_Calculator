@@ -6,12 +6,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_library(CoreLib STATIC
         src/Complex.cpp
-        src/Expression.cpp
         src/Operations.cpp
-        src/Logger.cpp
         src/Variable.cpp
         src/Context.cpp
-        src/Constant.cpp
 )
 
 # Указываем, где лежат заголовочные файлы (.h)
