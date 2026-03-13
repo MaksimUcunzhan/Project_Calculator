@@ -128,11 +128,14 @@ int main() {
 
             // help command
             if (input == "help") {
-                std::cout << "Commands:\n"
-                          << "  <expr>            Evaluate expression (e.g. 2 + 3, x * 4, 10 / 2)\n"
-                          << "  let <name> = <value>   Set variable (real number)\n"
-                          << "  get <name>        Get variable value\n"
-                          << "  exit              Quit program\n";
+                std::cout << "\nAvailable commands:\n";
+                std::cout << "  <expression>      - Calculate expression\n";
+                std::cout << "  let x = <value>   - Assign variable\n";
+                std::cout << "  get x             - Get variable value\n";
+                std::cout << "  vars              - List all variables\n";
+                std::cout << "  clear x           - Remove variable\n";
+                std::cout << "  help              - Show this help\n";
+                std::cout << "  exit              - Exit program\n\n";
                 continue;
             }
 
