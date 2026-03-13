@@ -29,6 +29,13 @@ public:
         : MathException("NegativeSqrt: " + msg) {}
 };
 
+// parse exception
+class ParseException : public CalculatorException {
+public:
+    explicit ParseException(const std::string& msg)
+        : CalculatorException("ParseError: " + msg) {}
+};
+
 // variable exception group
 class VariableException : public CalculatorException {
 public:
@@ -46,4 +53,11 @@ class VariableNameException : public VariableException {
 public:
     explicit VariableNameException(const std::string& msg)
         : VariableException("InvalidName: " + msg) {}
+};
+
+// file exception
+class FileIOException : public CalculatorException {
+public:
+    explicit FileIOException(const std::string& path)
+        : CalculatorException("FileIO: Cannot access '" + path + "'") {}
 };
