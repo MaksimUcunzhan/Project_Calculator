@@ -180,6 +180,23 @@ int main() {
                 continue;
             }
 
+            if (input.rfind("clear ", 0) == 0) {
+                std::string name = trim(input.substr(6));
+                if (!isIdentifier(name)) {
+                    throw VariableNameException("Invalid variable name: '" + name + "'");
+                }
+
+                if (!globalContext.hasVariable(name)) {
+                    throw UndefinedVariableException("Not found variable: '" + name + "'");
+                }
+
+                globalContext.deleteVariable(name);
+
+                std::cout << "[INFO] Variable '" << name << "' deleted\n";
+                logger.write("Deleted " + name);
+                continue;
+            }
+
             auto expr = parseExpression(input);
             Complex result = expr->evaluate();
 
@@ -190,10 +207,12 @@ int main() {
             std::cerr << "[ERROR] " << e.what() << "\n";
             logger.write(std::string("ERROR: ") + e.what());
         }
+
         catch (const UndefinedVariableException& e) {
             std::cerr << "[ERROR] " << e.what() << "\n";
             logger.write(std::string("ERROR: ") + e.what());
         }
+
         catch (const VariableNameException& e) {
             std::cerr << "[ERROR] " << e.what() << "\n";
             logger.write(std::string("ERROR: ") + e.what());
