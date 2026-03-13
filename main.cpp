@@ -100,3 +100,38 @@ std::string complexToString(const Complex& c) {
     oss << c;
     return oss.str();
 }
+
+int main() {
+    Logger logger("session.log");
+
+    std::cout << ">>> Welcome to Complex Calculator\n";
+    std::cout << ">>> Type 'help' for commands, 'exit' to quit.\n\n";
+
+    std::string line;
+
+    while (true) {
+        std::cout << "> ";
+        if (!std::getline(std::cin, line)) {
+            break; // Ctrl+D
+        }
+
+        std::string input = trim(line);
+        if (input.empty()) continue;
+
+        logger.write("Input: " + input);
+
+        try {
+            // ----- команды выхода -----
+            if (input == "exit" || input == "quit") {
+                break;
+            }
+
+            // ----- help -----
+            if (input == "help") {
+                std::cout << "Commands:\n"
+                          << "  <expr>            Evaluate expression (e.g. 2 + 3, x * 4, 10 / 2)\n"
+                          << "  let <name> = <value>   Set variable (real number)\n"
+                          << "  get <name>        Get variable value\n"
+                          << "  exit              Quit program\n";
+                continue;
+            }
