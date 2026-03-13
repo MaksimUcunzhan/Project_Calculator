@@ -58,3 +58,39 @@ std::unique_ptr<Expression> parseAtom(const std::string& token) {
     }
     throw ParseException("Invalid token: '" + token + "'");
 }
+
+std::unique_ptr<Expression> parseExpression(const std::string& input) {
+    std::istringstream in(input);
+    std::string leftTok;
+    if (!(in >> leftTok)) {
+        throw ParseException("Empty expression");
+    }
+
+    auto left = parseAtom(leftTok);
+
+    char op;
+    if (!(in >> op)) {
+        // only one (number or variable)
+        return left;
+    }
+
+    std::string rightTok;
+    if (!(in >> rightTok)) {
+        throw ParseException("Expected right operand after operator");
+    }
+
+    auto right = parseAtom(rightTok);
+
+    switch (op) {
+        case '+':
+            return std::make_unique<AddOperation>(std::move(left), std::move(right));
+        case '*':
+            return std::make_unique<MulOperations>(std::move(left), std::move(right));
+        case '/':
+            return std::make_unique<DivOperations>(std::move(left), std::move(right));
+        case '-':
+            throw ParseException("Subtraction '-' is not supported in this version");
+        default:
+            throw ParseException(std::string("Unknown operator '") + op + "'");
+    }
+}
