@@ -94,3 +94,9 @@ std::unique_ptr<Expression> parseExpression(const std::string& input) {
             throw ParseException(std::string("Unknown operator '") + op + "'");
     }
 }
+
+std::string complexToString(const Complex& c) {
+    std::ostringstream oss;
+    oss << c;
+    return oss.str();
+}
