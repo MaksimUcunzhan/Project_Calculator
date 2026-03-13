@@ -1,12 +1,3 @@
-//
-// Created by Максим Учунжян on 10.03.2026.
-//
-
-#ifndef PROJECT_CALCULATOR_EXCEPTIONS_H
-#define PROJECT_CALCULATOR_EXCEPTIONS_H
-
-#endif //PROJECT_CALCULATOR_EXCEPTIONS_H
-
 #pragma once
 #include <stdexcept>
 #include <string>
@@ -36,4 +27,23 @@ class NegativeSqrtException : public MathException {
 public:
     explicit NegativeSqrtException(const std::string& msg)
         : MathException("NegativeSqrt: " + msg) {}
+};
+
+// variable exception group
+class VariableException : public CalculatorException {
+public:
+    explicit VariableException(const std::string& msg)
+        : CalculatorException(msg) {}
+};
+
+class UndefinedVariableException : public VariableException {
+public:
+    explicit UndefinedVariableException(const std::string& msg)
+        : VariableException("UndefinedVariable: " + msg) {}
+};
+
+class VariableNameException : public VariableException {
+public:
+    explicit VariableNameException(const std::string& msg)
+        : VariableException("InvalidName: " + msg) {}
 };
