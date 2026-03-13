@@ -11,6 +11,8 @@ private:
 public:
     void setVariable(const std::string &name, const Complex &value);
 
+    void deleteVariable(const std::string &name);
+
     std::optional<Complex> getVariable(const std::string &name) const;
 
     bool hasVariable(const std::string &name) const;
