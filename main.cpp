@@ -46,3 +46,15 @@ bool isIdentifier(const std::string& s) {
     }
     return true;
 }
+
+// converts number -> constant, name -> variable
+std::unique_ptr<Expression> parseAtom(const std::string& token) {
+    if (isNumber(token)) {
+        double value = std::stod(token);
+        return std::make_unique<Constant>(value);
+    }
+    if (isIdentifier(token)) {
+        return std::make_unique<Variable>(token);
+    }
+    throw ParseException("Invalid token: '" + token + "'");
+}
