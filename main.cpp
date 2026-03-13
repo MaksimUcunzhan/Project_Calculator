@@ -177,3 +177,39 @@ int main() {
                 logger.write("Get " + name + " = " + complexToString(val.value()));
                 continue;
             }
+
+            auto expr = parseExpression(input);
+            Complex result = expr->evaluate();
+
+            std::cout << "= " << result << "\n";
+            logger.write("Result: " + complexToString(result));
+        }
+        catch (const DivisionByZeroException& e) {
+            std::cerr << "[ERROR] " << e.what() << "\n";
+            logger.write(std::string("ERROR: ") + e.what());
+        }
+        catch (const UndefinedVariableException& e) {
+            std::cerr << "[ERROR] " << e.what() << "\n";
+            logger.write(std::string("ERROR: ") + e.what());
+        }
+        catch (const VariableNameException& e) {
+            std::cerr << "[ERROR] " << e.what() << "\n";
+            logger.write(std::string("ERROR: ") + e.what());
+        }
+        catch (const ParseException& e) {
+            std::cerr << "[ERROR] " << e.what() << "\n";
+            logger.write(std::string("ERROR: ") + e.what());
+        }
+        catch (const CalculatorException& e) {
+            std::cerr << "[ERROR] " << e.what() << "\n";
+            logger.write(std::string("ERROR: ") + e.what());
+        }
+        catch (const std::exception& e) {
+            std::cerr << "[ERROR] Unexpected: " << e.what() << "\n";
+            logger.write(std::string("ERROR: Unexpected: ") + e.what());
+        }
+    }
+
+    std::cout << ">>> Goodbye!\n";
+    return 0;
+}
