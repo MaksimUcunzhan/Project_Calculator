@@ -88,7 +88,7 @@ std::unique_ptr<Expression> parseExpression(const std::string& input) {
         case '/':
             return std::make_unique<DivOperations>(std::move(left), std::move(right));
         case '-':
-            throw ParseException("Subtraction '-' is not supported in this version");
+            return std::make_unique<SubOperations>(std::move(left), std::move(right));
         default:
             throw ParseException(std::string("Unknown operator '") + op + "'");
     }
