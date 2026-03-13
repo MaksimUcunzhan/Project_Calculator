@@ -2,7 +2,7 @@
 #include <stdexcept>
 #include <string>
 
-// Basic exceptions for the project
+// basic exceptions for the project
 class CalculatorException : public std::runtime_error {
 public:
     explicit CalculatorException(const std::string& msg)

@@ -1,7 +1,6 @@
 #include <iostream>
 #include <string>
 #include <sstream>
-#include <cctype>
 #include <memory>
 
 #include "Complex.h"

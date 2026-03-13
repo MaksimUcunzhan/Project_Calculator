@@ -3,7 +3,6 @@
 #include <Expression.h>
 #include <string>
 #include <memory>
-#include <stdexcept>
 
 
 class Variable : public Expression {

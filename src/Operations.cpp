@@ -1,6 +1,7 @@
 #include "Operations.h"
 
-BinaryOperation::BinaryOperation(std::unique_ptr<Expression> l, std::unique_ptr<Expression> r) : left(std::move(l)),
+BinaryOperation::BinaryOperation(std::unique_ptr<Expression> l,
+    std::unique_ptr<Expression> r) : left(std::move(l)),
     right(std::move(r)) {
 }
 
