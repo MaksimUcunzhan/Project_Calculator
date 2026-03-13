@@ -27,4 +27,7 @@ public:
             } catch (...) {}
         }
     }
+
+    Logger(const Logger&) = delete;
+    Logger& operator=(const Logger&) = delete;
 };
