@@ -1,9 +1,7 @@
 #include "Variable.h"
+#include "Exceptions.h"
 #include <stdexcept>
 
-UndefinedVariableException::UndefinedVariableException(const std::string &msg)
-    : std::runtime_error(msg) {
-}
 
 Variable::Variable(const std::string &n) : name(n) {
 }

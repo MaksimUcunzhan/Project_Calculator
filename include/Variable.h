@@ -5,12 +5,6 @@
 #include <memory>
 #include <stdexcept>
 
-class UndefinedVariableException : public std::runtime_error {
-public:
-    explicit UndefinedVariableException(const std::string &msg);
-};
-
-
 
 class Variable : public Expression {
 private:
