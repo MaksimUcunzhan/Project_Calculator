@@ -10,6 +10,7 @@
 #include "Context.h"
 #include "Logger.h"
 #include "Exceptions.h"
+#include "Parser.h"
 
 
 std::string trim(const std::string& s) {
@@ -17,22 +18,6 @@ std::string trim(const std::string& s) {
     if (start == std::string::npos) return "";
     size_t end = s.find_last_not_of(" \t");
     return s.substr(start, end - start + 1);
-}
-
-bool isNumber(const std::string& s) {
-    if (s.empty()) return false;
-    bool hasDigit = false;
-    size_t i = 0;
-
-    if (s[0] == '+' || s[0] == '-') i = 1;
-    for (; i < s.size(); ++i) {
-        if (std::isdigit(static_cast<unsigned char>(s[i])) || s[i] == '.') {
-            hasDigit = true;
-        } else {
-            return false;
-        }
-    }
-    return hasDigit;
 }
 
 bool isIdentifier(const std::string& s) {
@@ -46,54 +31,6 @@ bool isIdentifier(const std::string& s) {
     return true;
 }
 
-// converts number -> constant, name -> variable
-std::unique_ptr<Expression> parseAtom(const std::string& token) {
-    if (isNumber(token)) {
-        double value = std::stod(token);
-        return std::make_unique<Constant>(value);
-    }
-    if (isIdentifier(token)) {
-        return std::make_unique<Variable>(token);
-    }
-    throw ParseException("Invalid token: '" + token + "'");
-}
-
-std::unique_ptr<Expression> parseExpression(const std::string& input) {
-    std::istringstream in(input);
-    std::string leftTok;
-    if (!(in >> leftTok)) {
-        throw ParseException("Empty expression");
-    }
-
-    auto left = parseAtom(leftTok);
-
-    char op;
-    if (!(in >> op)) {
-        // only one (number or variable)
-        return left;
-    }
-
-    std::string rightTok;
-    if (!(in >> rightTok)) {
-        throw ParseException("Expected right operand after operator");
-    }
-
-    auto right = parseAtom(rightTok);
-
-    switch (op) {
-        case '+':
-            return std::make_unique<AddOperation>(std::move(left), std::move(right));
-        case '*':
-            return std::make_unique<MulOperations>(std::move(left), std::move(right));
-        case '/':
-            return std::make_unique<DivOperations>(std::move(left), std::move(right));
-        case '-':
-            return std::make_unique<SubOperations>(std::move(left), std::move(right));
-        default:
-            throw ParseException(std::string("Unknown operator '") + op + "'");
-    }
-}
-
 std::string complexToString(const Complex& c) {
     std::ostringstream oss;
     oss << c;
@@ -103,16 +40,15 @@ std::string complexToString(const Complex& c) {
 int main() {
     Logger logger("session.log");
 
-    std::cout << ">>> Welcome to ComplexCalc (C++23)\n";
+    std::cout << ">>> Welcome to Complex Calculator\n";
     std::cout << ">>> Type 'help' for commands, 'exit' to quit.\n\n";
 
     std::string line;
 
     while (true) {
         std::cout << "> ";
-        if (!std::getline(std::cin, line)) {
+        if (!std::getline(std::cin, line))
             break;
-        }
 
         std::string input = trim(line);
         if (input.empty()) continue;
@@ -120,65 +56,59 @@ int main() {
         logger.write("Input: " + input);
 
         try {
-            // exit commands
-            if (input == "exit" || input == "quit") {
+            if (input == "exit" || input == "quit")
                 break;
-            }
 
-            // help command
             if (input == "help") {
-                std::cout << "\nAvailable commands:\n";
-                std::cout << "  <expression>      - Calculate expression\n";
-                std::cout << "  let x = <value>   - Assign variable\n";
-                std::cout << "  get x             - Get variable value\n";
-                std::cout << "  vars              - List all variables\n";
-                std::cout << "  clear x           - Remove variable\n";
-                std::cout << "  help              - Show this help\n";
-                std::cout << "  exit              - Exit program\n\n";
+                std::cout << "\nAvailable commands:\n"
+                          << "  <expression>          Calculate expression\n"
+                          << "  let <name> = <expr>   Assign variable\n"
+                          << "  get <name>            Get variable value\n"
+                          << "  vars                  List all variables\n"
+                          << "  clear <name>          Remove variable\n"
+                          << "  help                  Show this help\n"
+                          << "  exit                  Exit program\n\n";
                 continue;
             }
+
             if (input == "vars") {
                 std::cout << "Defined variables:\n";
                 globalContext.printAll(std::cout);
                 std::cout << "\n";
                 continue;
             }
+
             // let command
-            if (input.rfind("let ", 0) == 0) { // начинается с "let "
+            if (input.rfind("let ", 0) == 0) {
                 size_t eqPos = input.find('=');
-                if (eqPos == std::string::npos) {
+                if (eqPos == std::string::npos)
                     throw ParseException("Invalid assignment, expected '='");
-                }
 
                 std::string namePart  = trim(input.substr(4, eqPos - 4));
                 std::string valuePart = trim(input.substr(eqPos + 1));
 
-                if (!isIdentifier(namePart)) {
+                if (!isIdentifier(namePart))
                     throw VariableNameException("Invalid variable name: '" + namePart + "'");
-                }
-                if (!isNumber(valuePart)) {
-                    throw ParseException("Right side of assignment must be a number");
-                }
 
-                double value = std::stod(valuePart);
-                globalContext.setVariable(namePart, Complex(value));
+                Parser parser(valuePart);
+                auto expr = parser.parse();
+                Complex value = expr->evaluate();
+
+                globalContext.setVariable(namePart, value);
                 std::cout << "[INFO] Variable '" << namePart << "' = " << value << "\n";
-                logger.write("Set " + namePart + " = " + std::to_string(value));
+                logger.write("Set " + namePart + " = " + complexToString(value));
                 continue;
             }
 
             // get command
             if (input.rfind("get ", 0) == 0) {
                 std::string name = trim(input.substr(4));
-                if (!isIdentifier(name)) {
+                if (!isIdentifier(name))
                     throw VariableNameException("Invalid variable name: '" + name + "'");
-                }
 
-                auto val = globalContext.getVariable(name); // std::optional<Complex>
-
-                if (!val.has_value()) {
+                auto val = globalContext.getVariable(name);
+                if (!val.has_value())
                     throw UndefinedVariableException("Variable '" + name + "' not found");
-                }
 
                 std::cout << "= " << val.value() << "\n";
                 logger.write("Get " + name + " = " + complexToString(val.value()));
@@ -188,22 +118,21 @@ int main() {
             // clear function
             if (input.rfind("clear ", 0) == 0) {
                 std::string name = trim(input.substr(6));
-                if (!isIdentifier(name)) {
+                if (!isIdentifier(name))
                     throw VariableNameException("Invalid variable name: '" + name + "'");
-                }
 
-                if (!globalContext.hasVariable(name)) {
+                if (!globalContext.hasVariable(name))
                     throw UndefinedVariableException("Not found variable: '" + name + "'");
-                }
 
                 globalContext.deleteVariable(name);
-
                 std::cout << "[INFO] Variable '" << name << "' deleted\n";
                 logger.write("Deleted " + name);
                 continue;
             }
 
-            auto expr = parseExpression(input);
+            // Parse expression
+            Parser parser(input);
+            auto expr = parser.parse();
             Complex result = expr->evaluate();
 
             std::cout << "= " << result << "\n";
@@ -213,12 +142,10 @@ int main() {
             std::cerr << "[ERROR] " << e.what() << "\n";
             logger.write(std::string("ERROR: ") + e.what());
         }
-
         catch (const UndefinedVariableException& e) {
             std::cerr << "[ERROR] " << e.what() << "\n";
             logger.write(std::string("ERROR: ") + e.what());
         }
-
         catch (const VariableNameException& e) {
             std::cerr << "[ERROR] " << e.what() << "\n";
             logger.write(std::string("ERROR: ") + e.what());
